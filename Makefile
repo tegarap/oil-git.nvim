@@ -30,4 +30,4 @@ setup:
 	@git config core.hooksPath .githooks
 	@echo "Git hooks configured to use .githooks/"
 
-lf: format lint luacheck
+fl: format lint luacheck

@@ -1,3 +1,6 @@
+---@diagnostic disable: lowercase-global
+---@diagnostic disable: undefined-global
+
 std = "lua51"
 globals = { "vim" }
 max_line_length = 80

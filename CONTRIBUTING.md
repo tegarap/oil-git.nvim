@@ -7,6 +7,8 @@
 - [oil.nvim](https://github.com/stevearc/oil.nvim)
 - Git
 
+For better IDE support with LuaLS (autocompletion, type hints), consider using [lazydev.nvim](https://github.com/folke/lazydev.nvim).
+
 ## Development Setup
 
 ```bash
