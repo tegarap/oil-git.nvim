@@ -161,6 +161,11 @@ Status auto-refreshes on buffer enter, file operations, focus changes, and termi
 - [oil.nvim](https://github.com/stevearc/oil.nvim)
 - Git
 
+## Credits
+
+- [benomahony/oil-git.nvim](https://github.com/benomahony/oil-git.nvim) - Original project this fork is based on
+- [oil.nvim](https://github.com/stevearc/oil.nvim) by stevearc - The file explorer this plugin extends
+
 ## License
 
 [MIT](LICENSE)
