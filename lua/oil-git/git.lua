@@ -23,7 +23,12 @@ function M.invalidate_cache()
 end
 
 function M.get_root(dir)
-	local git_dir = vim.fn.finddir(".git", dir .. ";")
+	local git_dir = vim.fn.findfile(".git", dir .. ";")
+	if git_dir ~= "" then
+		return vim.fn.fnamemodify(git_dir, ":p:h"), "findfile"
+	end
+
+	git_dir = vim.fn.finddir(".git", dir .. ";")
 	if git_dir ~= "" then
 		return vim.fn.fnamemodify(git_dir, ":p:h:h"), "finddir"
 	end
@@ -41,7 +46,15 @@ function M.get_root(dir)
 end
 
 function M.get_root_async(dir, callback)
-	local git_dir = vim.fn.finddir(".git", dir .. ";")
+	local git_dir = vim.fn.findfile(".git", dir .. ";")
+	if git_dir ~= "" then
+		local root = vim.fn.fnamemodify(git_dir, ":p:h")
+		util.debug_log("verbose", "Git root found via findfile: %s", root)
+		callback(root)
+		return
+	end
+
+	git_dir = vim.fn.finddir(".git", dir .. ";")
 	if git_dir ~= "" then
 		local root = vim.fn.fnamemodify(git_dir, ":p:h:h")
 		util.debug_log("verbose", "Git root found via finddir: %s", root)
@@ -49,7 +62,11 @@ function M.get_root_async(dir, callback)
 		return
 	end
 
-	util.debug_log("verbose", "finddir failed, trying git command for: %s", dir)
+	util.debug_log(
+		"verbose",
+		"finddir/findfile failed, trying git command for: %s",
+		dir
+	)
 
 	local stdout = uv.new_pipe(false)
 	local output_parts = {}
