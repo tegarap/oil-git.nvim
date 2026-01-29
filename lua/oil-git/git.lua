@@ -23,13 +23,11 @@ function M.invalidate_cache()
 end
 
 function M.get_root(dir)
-	-- Check for .git as a file first (worktrees, submodules)
 	local git_dir = vim.fn.findfile(".git", dir .. ";")
 	if git_dir ~= "" then
 		return vim.fn.fnamemodify(git_dir, ":p:h"), "findfile"
 	end
 
-	-- Check for .git as a directory
 	git_dir = vim.fn.finddir(".git", dir .. ";")
 	if git_dir ~= "" then
 		return vim.fn.fnamemodify(git_dir, ":p:h:h"), "finddir"
@@ -48,7 +46,6 @@ function M.get_root(dir)
 end
 
 function M.get_root_async(dir, callback)
-	-- Check for .git as a file first (worktrees, submodules)
 	local git_dir = vim.fn.findfile(".git", dir .. ";")
 	if git_dir ~= "" then
 		local root = vim.fn.fnamemodify(git_dir, ":p:h")
@@ -57,7 +54,6 @@ function M.get_root_async(dir, callback)
 		return
 	end
 
-	-- Check for .git as a directory
 	git_dir = vim.fn.finddir(".git", dir .. ";")
 	if git_dir ~= "" then
 		local root = vim.fn.fnamemodify(git_dir, ":p:h:h")
