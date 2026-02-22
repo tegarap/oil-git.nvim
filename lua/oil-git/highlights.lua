@@ -60,6 +60,13 @@ local function can_use_signcolumn()
 	return true
 end
 
+local function set_signcolumn(bufnr, value)
+	local winid = vim.fn.bufwinid(bufnr)
+	if winid ~= -1 then
+		vim.wo[winid].signcolumn = value
+	end
+end
+
 function M.setup()
 	signcolumn_cache = nil
 	local cfg = config.get_raw()
@@ -86,6 +93,14 @@ function M.clear(bufnr)
 		buffer_ns_ids[bufnr] = nil
 	end
 	buffer_highlight_hashes[bufnr] = nil
+
+	local cfg = config.get()
+	if
+		cfg.can_use_signcolumn
+		and cfg.symbol_position == constants.SYMBOL_POSITIONS.SIGNCOLUMN
+	then
+		set_signcolumn(bufnr, "no")
+	end
 end
 
 function M.on_buf_delete(bufnr)
@@ -131,9 +146,18 @@ local function apply_to_buffer(
 	local show_ignored_files = cfg.show_ignored_files
 	local show_ignored_directories = cfg.show_ignored_directories
 	local symbol_position = cfg.symbol_position
+	local can_use_signcolumn_fn = cfg.can_use_signcolumn
+	local manage_signcolumn = false
+	local scl_value = nil
+
+	if can_use_signcolumn_fn and symbol_position == constants.SYMBOL_POSITIONS.SIGNCOLUMN then
+		scl_value = can_use_signcolumn_fn(bufnr)
+		manage_signcolumn = scl_value and true or false
+	end
+
 	local use_signcolumn = symbol_position
 			== constants.SYMBOL_POSITIONS.SIGNCOLUMN
-		and can_use_signcolumn()
+		and (manage_signcolumn or can_use_signcolumn())
 	local symbols_not_disabled = symbol_position
 		~= constants.SYMBOL_POSITIONS.NONE
 	local file_symbols = cfg.symbols.file
@@ -298,6 +322,10 @@ local function apply_to_buffer(
 			end
 			symbol_count = symbol_count + 1
 		end
+	end
+
+	if manage_signcolumn then
+		set_signcolumn(bufnr, symbol_count > 0 and scl_value or "no")
 	end
 
 	buffer_ns_ids[bufnr] = ns_id
