@@ -276,7 +276,7 @@ local function apply_to_buffer(
 					hl.line_idx,
 					0,
 					{
-						sign_text = hl.symbol:sub(1, 2),
+						sign_text = vim.fn.strcharpart(hl.symbol, 0, 2),
 						sign_hl_group = hl.hl_group,
 					}
 				)
