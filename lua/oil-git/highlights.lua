@@ -152,12 +152,12 @@ local function apply_to_buffer(
 
 	if can_use_signcolumn_fn and symbol_position == constants.SYMBOL_POSITIONS.SIGNCOLUMN then
 		scl_value = can_use_signcolumn_fn(bufnr)
-		manage_signcolumn = scl_value and true or false
+		manage_signcolumn = type(scl_value) == "string"
 	end
 
 	local use_signcolumn = symbol_position
 			== constants.SYMBOL_POSITIONS.SIGNCOLUMN
-		and (manage_signcolumn or can_use_signcolumn())
+		and (manage_signcolumn or scl_value or can_use_signcolumn())
 	local symbols_not_disabled = symbol_position
 		~= constants.SYMBOL_POSITIONS.NONE
 	local file_symbols = cfg.symbols.file
