@@ -96,10 +96,13 @@ function M.clear(bufnr)
 
 	local cfg = config.get()
 	if
-		cfg.can_use_signcolumn
-		and cfg.symbol_position == constants.SYMBOL_POSITIONS.SIGNCOLUMN
+		cfg.symbol_position == constants.SYMBOL_POSITIONS.SIGNCOLUMN
+		and cfg.can_use_signcolumn
 	then
-		set_signcolumn(bufnr, "no")
+		local ok, sc_value = pcall(cfg.can_use_signcolumn, bufnr)
+		if ok and type(sc_value) == "string" then
+			set_signcolumn(bufnr, "no")
+		end
 	end
 end
 
@@ -147,17 +150,40 @@ local function apply_to_buffer(
 	local show_ignored_directories = cfg.show_ignored_directories
 	local symbol_position = cfg.symbol_position
 	local can_use_signcolumn_fn = cfg.can_use_signcolumn
+	local can_use_signcolumn_override = nil
 	local manage_signcolumn = false
 	local scl_value = nil
 
-	if can_use_signcolumn_fn and symbol_position == constants.SYMBOL_POSITIONS.SIGNCOLUMN then
-		scl_value = can_use_signcolumn_fn(bufnr)
-		manage_signcolumn = type(scl_value) == "string"
+	if
+		can_use_signcolumn_fn
+		and symbol_position == constants.SYMBOL_POSITIONS.SIGNCOLUMN
+	then
+		local ok, callback_value = pcall(can_use_signcolumn_fn, bufnr)
+		if ok then
+			if type(callback_value) == "string" then
+				scl_value = callback_value
+				manage_signcolumn = true
+				can_use_signcolumn_override = true
+			elseif type(callback_value) == "boolean" then
+				can_use_signcolumn_override = callback_value
+			end
+		else
+			util.debug_log(
+				"minimal",
+				"can_use_signcolumn callback failed: %s",
+				callback_value
+			)
+		end
 	end
 
-	local use_signcolumn = symbol_position
-			== constants.SYMBOL_POSITIONS.SIGNCOLUMN
-		and (manage_signcolumn or scl_value or can_use_signcolumn())
+	local use_signcolumn = false
+	if symbol_position == constants.SYMBOL_POSITIONS.SIGNCOLUMN then
+		if can_use_signcolumn_override ~= nil then
+			use_signcolumn = can_use_signcolumn_override
+		else
+			use_signcolumn = can_use_signcolumn()
+		end
+	end
 	local symbols_not_disabled = symbol_position
 		~= constants.SYMBOL_POSITIONS.NONE
 	local file_symbols = cfg.symbols.file
