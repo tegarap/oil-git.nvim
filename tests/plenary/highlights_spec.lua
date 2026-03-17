@@ -34,6 +34,8 @@ describe("highlights", function()
 		it("should create highlight groups that don't exist", function()
 			vim.cmd("highlight clear OilGitAdded")
 			vim.cmd("highlight clear OilGitModified")
+			vim.cmd("highlight clear OilGitModifiedStaged")
+			vim.cmd("highlight clear OilGitModifiedUnstaged")
 			vim.cmd("highlight clear OilGitDeleted")
 
 			highlights.setup()
@@ -41,6 +43,8 @@ describe("highlights", function()
 			local groups = {
 				"OilGitAdded",
 				"OilGitModified",
+				"OilGitModifiedStaged",
+				"OilGitModifiedUnstaged",
 				"OilGitDeleted",
 				"OilGitRenamed",
 				"OilGitUntracked",

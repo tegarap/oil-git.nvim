@@ -155,6 +155,8 @@ describe("init", function()
 			local groups = {
 				"OilGitAdded",
 				"OilGitModified",
+				"OilGitModifiedStaged",
+				"OilGitModifiedUnstaged",
 				"OilGitDeleted",
 				"OilGitRenamed",
 				"OilGitUntracked",

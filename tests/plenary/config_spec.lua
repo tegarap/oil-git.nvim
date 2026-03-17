@@ -60,7 +60,28 @@ describe("config", function()
 			assert.equals("*", cfg.symbols.directory.added)
 			assert.equals("#ffffff", cfg.highlights.OilGitAdded.fg)
 			assert.is_not_nil(cfg.highlights.OilGitModified)
+			assert.is_not_nil(cfg.highlights.OilGitModifiedStaged)
+			assert.is_not_nil(cfg.highlights.OilGitModifiedUnstaged)
 		end)
+
+		it(
+			"should apply legacy modified highlight to both new groups",
+			function()
+				config.setup({
+					highlights = {
+						OilGitModified = { fg = "#111111" },
+					},
+				})
+				local cfg = config.get()
+
+				assert.equals("#111111", cfg.highlights.OilGitModified.fg)
+				assert.equals("#111111", cfg.highlights.OilGitModifiedStaged.fg)
+				assert.equals(
+					"#111111",
+					cfg.highlights.OilGitModifiedUnstaged.fg
+				)
+			end
+		)
 
 		it("should handle debug option", function()
 			config.setup({ debug = "verbose" })
@@ -172,6 +193,8 @@ describe("config", function()
 			local expected_groups = {
 				"OilGitAdded",
 				"OilGitModified",
+				"OilGitModifiedStaged",
+				"OilGitModifiedUnstaged",
 				"OilGitRenamed",
 				"OilGitDeleted",
 				"OilGitCopied",

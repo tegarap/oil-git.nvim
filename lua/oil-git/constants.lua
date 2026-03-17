@@ -11,6 +11,8 @@ M.DEFAULTS = {
 M.HIGHLIGHT_GROUPS = {
 	ADDED = "OilGitAdded",
 	MODIFIED = "OilGitModified",
+	MODIFIED_STAGED = "OilGitModifiedStaged",
+	MODIFIED_UNSTAGED = "OilGitModifiedUnstaged",
 	RENAMED = "OilGitRenamed",
 	DELETED = "OilGitDeleted",
 	COPIED = "OilGitCopied",
@@ -43,8 +45,10 @@ M.PRIORITY = {
 	COPIED = 3,
 	ADDED = 4,
 	DELETED = 5,
-	MODIFIED = 6,
-	CONFLICT = 7,
+	MODIFIED_UNSTAGED = 6,
+	MODIFIED_STAGED = 7,
+	MODIFIED = 7,
+	CONFLICT = 8,
 }
 
 return M

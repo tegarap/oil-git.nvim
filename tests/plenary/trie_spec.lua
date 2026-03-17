@@ -58,7 +58,7 @@ describe("trie", function()
 					root.children["src"].children["file.lua"].status
 				)
 				assert.equals(
-					6,
+					7,
 					root.children["src"].children["file.lua"].priority
 				)
 			end
@@ -69,7 +69,7 @@ describe("trie", function()
 			local git_root = "/repo"
 
 			trie.insert(root, "/repo/src/a.lua", "A ", git_root) -- ADDED = 4
-			trie.insert(root, "/repo/src/b.lua", "M ", git_root) -- MODIFIED = 6
+			trie.insert(root, "/repo/src/b.lua", "M ", git_root) -- MODIFIED_STAGED = 7
 			trie.insert(root, "/repo/src/c.lua", "??", git_root) -- UNTRACKED = 2
 
 			assert.is_nil(root.children["src"].status)
@@ -204,7 +204,35 @@ describe("trie", function()
 				local root = trie.create_node()
 				local git_root = "/repo"
 				trie.insert(root, "/repo/src/a.lua", "??", git_root) -- UNTRACKED = 2
-				trie.insert(root, "/repo/src/b.lua", "M ", git_root) -- MODIFIED = 6
+				trie.insert(root, "/repo/src/b.lua", "M ", git_root) -- MODIFIED_STAGED = 7
+
+				local result = trie.lookup(root, "/repo/src", git_root)
+				assert.equals("M ", result)
+			end
+		)
+
+		it(
+			"should compute unstaged modified directory status from children",
+			function()
+				local root = trie.create_node()
+				local git_root = "/repo"
+
+				trie.insert(root, "/repo/src/a.lua", " M", git_root)
+				trie.insert(root, "/repo/src/b.lua", "??", git_root)
+
+				local result = trie.lookup(root, "/repo/src", git_root)
+				assert.equals(" M", result)
+			end
+		)
+
+		it(
+			"should prefer staged modified over unstaged for directories",
+			function()
+				local root = trie.create_node()
+				local git_root = "/repo"
+
+				trie.insert(root, "/repo/src/a.lua", " M", git_root)
+				trie.insert(root, "/repo/src/b.lua", "M ", git_root)
 
 				local result = trie.lookup(root, "/repo/src", git_root)
 				assert.equals("M ", result)

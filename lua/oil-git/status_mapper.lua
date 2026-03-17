@@ -5,9 +5,9 @@ local constants = require("oil-git.constants")
 local STATUS_MAP = {
 	A = { constants.HIGHLIGHT_GROUPS.ADDED, "added", constants.PRIORITY.ADDED },
 	M = {
-		constants.HIGHLIGHT_GROUPS.MODIFIED,
+		constants.HIGHLIGHT_GROUPS.MODIFIED_STAGED,
 		"modified",
-		constants.PRIORITY.MODIFIED,
+		constants.PRIORITY.MODIFIED_STAGED,
 	},
 	R = {
 		constants.HIGHLIGHT_GROUPS.RENAMED,
@@ -33,9 +33,9 @@ local STATUS_MAP = {
 
 local WORKTREE_STATUS_MAP = {
 	M = {
-		constants.HIGHLIGHT_GROUPS.MODIFIED,
+		constants.HIGHLIGHT_GROUPS.MODIFIED_UNSTAGED,
 		"modified",
-		constants.PRIORITY.MODIFIED,
+		constants.PRIORITY.MODIFIED_UNSTAGED,
 	},
 	D = {
 		constants.HIGHLIGHT_GROUPS.DELETED,

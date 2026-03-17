@@ -39,6 +39,8 @@ local default_config = {
 	highlights = {
 		OilGitAdded = { fg = "#a6e3a1" },
 		OilGitModified = { fg = "#f9e2af" },
+		OilGitModifiedStaged = { fg = "#f9e2af" },
+		OilGitModifiedUnstaged = { fg = "#e5c890" },
 		OilGitRenamed = { fg = "#cba6f7" },
 		OilGitUntracked = { fg = "#89b4fa" },
 		OilGitIgnored = { fg = "#6c7086" },
@@ -49,6 +51,27 @@ local default_config = {
 }
 
 local config = {}
+
+local function apply_legacy_modified_highlights(opts, merged_config)
+	local user_highlights = opts.highlights or {}
+	local legacy_modified = user_highlights.OilGitModified
+
+	if not legacy_modified then
+		return
+	end
+
+	if not user_highlights.OilGitModifiedStaged then
+		merged_config.highlights.OilGitModifiedStaged =
+			vim.deepcopy(legacy_modified)
+	end
+
+	if not user_highlights.OilGitModifiedUnstaged then
+		merged_config.highlights.OilGitModifiedUnstaged =
+			vim.deepcopy(legacy_modified)
+	end
+
+	merged_config.highlights.OilGitModified = vim.deepcopy(legacy_modified)
+end
 
 local function make_readonly(t)
 	if type(t) ~= "table" then
@@ -83,6 +106,7 @@ end
 function M.setup(opts)
 	opts = opts or {}
 	config = vim.tbl_deep_extend("force", default_config, opts)
+	apply_legacy_modified_highlights(opts, config)
 end
 
 function M.get()

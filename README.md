@@ -111,7 +111,8 @@ require("oil-git").setup({
   -- Colors (only applied if highlight groups don't exist)
   highlights = {
     OilGitAdded = { fg = "#a6e3a1" },
-    OilGitModified = { fg = "#f9e2af" },
+    OilGitModifiedStaged = { fg = "#f9e2af" },
+    OilGitModifiedUnstaged = { fg = "#e5c890" },
     OilGitRenamed = { fg = "#cba6f7" },
     OilGitDeleted = { fg = "#f38ba8" },
     OilGitCopied = { fg = "#cba6f7" },
@@ -138,7 +139,8 @@ When `symbol_position = "signcolumn"`, you can optionally provide
 | Status | File Symbol | Color | Description |
 |--------|-------------|-------|-------------|
 | Added | `+` | Green | Staged new file |
-| Modified | `~` | Yellow | Changed (staged/unstaged) |
+| Modified (staged) | `~` | Yellow | Changes staged in the index |
+| Modified (unstaged) | `~` | Gold | Changes only in the worktree |
 | Renamed | `->` | Purple | Renamed file |
 | Deleted | `D` | Red | Deleted file |
 | Copied | `C` | Purple | Copied file |
@@ -152,8 +154,9 @@ Directories show the highest-priority status among their contents:
 
 | Priority | Status | Description |
 |----------|--------|-------------|
-| 7 | Conflict | Merge conflicts need immediate attention |
-| 6 | Modified | Staged or unstaged changes |
+| 8 | Conflict | Merge conflicts need immediate attention |
+| 7 | Modified (staged) | Staged changes take precedence in directories |
+| 6 | Modified (unstaged) | Worktree-only changes |
 | 5 | Deleted | Deleted files |
 | 4 | Added | New staged files |
 | 3 | Renamed/Copied | Renamed or copied files |
