@@ -28,9 +28,14 @@ function M.get_root(dir)
 		return vim.fn.fnamemodify(git_dir, ":p:h"), "findfile"
 	end
 
-	git_dir = vim.fn.finddir(".git", dir .. ";")
-	if git_dir ~= "" then
-		return vim.fn.fnamemodify(git_dir, ":p:h:h"), "finddir"
+	git_dir = vim.fs.find(".git", {
+		path = dir,
+		upward = true,
+		type = "directory",
+	})[1]
+
+	if git_dir then
+		return vim.fs.dirname(vim.fs.dirname(git_dir)), "vim.fs.find"
 	end
 
 	local result =
@@ -54,10 +59,16 @@ function M.get_root_async(dir, callback)
 		return
 	end
 
-	git_dir = vim.fn.finddir(".git", dir .. ";")
-	if git_dir ~= "" then
-		local root = vim.fn.fnamemodify(git_dir, ":p:h:h")
-		util.debug_log("verbose", "Git root found via finddir: %s", root)
+	git_dir = vim.fs.find(".git", {
+		path = dir,
+		upward = true,
+		type = "directory",
+	})[1]
+
+	if git_dir then
+		local root = vim.fs.dirname(vim.fs.dirname(git_dir))
+		util.debug_log("verbose", "Git root found via vim.fs.find: %s", root)
+
 		callback(root)
 		return
 	end

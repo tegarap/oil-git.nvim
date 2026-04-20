@@ -62,15 +62,21 @@ function M.create_directory(repo_dir, dirname)
 end
 
 function M.get_git_status(repo_dir)
-	local result = vim.fn.system({
+	vim.system({
 		"git",
 		"-C",
 		repo_dir,
 		"status",
 		"--porcelain",
 		"--ignored",
-	})
-	return result
+	}, { text = true }, function(obj)
+		if obj.code ~= 0 then
+			return
+		end
+
+		local result = obj.stdout
+		return result
+	end)
 end
 
 function M.cleanup(dir)
